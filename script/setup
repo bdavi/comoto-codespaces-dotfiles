@@ -1,8 +1,19 @@
 #!/usr/bin/env zsh
 
 sudo apk update
+
+
+###############################################################################
+# Install tmux
+###############################################################################
 sudo apk add tmux
 
+git clone https://github.com/tmux-plugins/tpm /home/vscode/.tmux/plugins/tpm
+
+
+###############################################################################
+# Link dotfiles
+###############################################################################
 cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
 
 # sudo apk add vim
@@ -16,5 +27,5 @@ cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode
 ##################################
 # gh cs list
 # gh cs delete
-# gh cs create Comoto-Tech/dev-hub
+# gh cs create -R Comoto-Tech/dev-hub
 # gh cs ssh
