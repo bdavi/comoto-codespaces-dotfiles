@@ -13,9 +13,9 @@ git_branch() {
 git_status() {
     local status="$(git status --porcelain 2>/dev/null)"
     local output=''
-    [[ -n $(egrep '^[MADRC]' <<<"$status") ]] && output="$output+"
-    [[ -n $(egrep '^.[MD]' <<<"$status") ]] && output="$output!"
-    [[ -n $(egrep '^\?\?' <<<"$status") ]] && output="$output?"
+    [[ -n $(grep -E '^[MADRC]' <<<"$status") ]] && output="$output+"
+    [[ -n $(grep -E '^.[MD]' <<<"$status") ]] && output="$output!"
+    [[ -n $(grep -E '^\?\?' <<<"$status") ]] && output="$output?"
     [[ -n $(git stash list) ]] && output="${output}S"
     [[ -n $(git log --branches --not --remotes) ]] && output="${output}P"
     [[ -n $output ]] && output="|$output"  # separate from branch name
@@ -66,8 +66,8 @@ alias cleawr='clear'
 alias c="clear"
 alias ll="ls -lah"
 alias rename='tmux rename-window'
-alias source!='source ~/.bashrc; tmux source-file ~/.tmux.conf; tmux display-message "SOURCED!"'
-alias vc='vim -p ~/.vimrc ~/.commonrc ~/.tmux.conf ~/.zshrc ~/.bashrc'
+alias source!='source ~/.zshrc; tmux source-file ~/.tmux.conf; tmux display-message "SOURCED!"'
+alias vc='vim -p ~/.vimrc ~/.commonrc ~/.tmux.conf ~/.zshrc ~/.zshrc'
 
 
 ###############################################################################
@@ -76,18 +76,6 @@ alias vc='vim -p ~/.vimrc ~/.commonrc ~/.tmux.conf ~/.zshrc ~/.bashrc'
 export EDITOR='vim'
 alias cim='vim'
 alias bim='vim'
-
-
-###############################################################################
-# Misc
-###############################################################################
-# Swap esc and caplock
-alias swapesc='/usr/bin/setxkbmap -option caps:swapescape'
-/usr/bin/setxkbmap -option caps:swapescape
-
-# Keyboard speed
-alias keyfast='xset r rate 225 60'
-xset r rate 225 60
 
 
 ###############################################################################
@@ -114,13 +102,13 @@ alias gc='git commit'
 alias gp='git push'
 alias ga='git add'
 # Delete branches already merged into current branch
-alias gdb='git branch --merged | egrep -v "(^\*|master|main|dev)" | xargs git branch -d'
+alias gdb='git branch --merged | grep -E -v "(^\*|master|main|dev)" | xargs git branch -d'
 
 
 # Switch to -D for danger mode
 function full-prune() {
   git fetch -p
-  git branch -r | awk '{print $1}' | egrep -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+  git branch -r | awk '{print $1}' | grep -E -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
 }
 
 
