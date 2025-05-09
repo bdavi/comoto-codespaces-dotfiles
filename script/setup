@@ -3,7 +3,7 @@
 sudo apk update
 sudo apk add tmux
 
-cp -rsf ~/code/dotfiles/config_files/. ~
+cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
 
 # sudo apk add vim
 # sudo apk add ranger
@@ -11,6 +11,10 @@ cp -rsf ~/code/dotfiles/config_files/. ~
 # sudo apk del ranger
 # sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
 
+##################################
+# Codespaces Notes
+##################################
 # gh cs list
 # gh cs delete
-
+# gh cs create Comoto-Tech/dev-hub
+# gh cs ssh
