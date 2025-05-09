@@ -8,8 +8,12 @@ sudo apk update
 ###############################################################################
 sudo apk add tmux
 
-git clone https://github.com/tmux-plugins/tpm /home/vscode/.tmux/plugins/tpm
-
+if [ -d "/home/vscode/.tmux/plugins/tpm" ]
+then
+  echo "tmux plugin manager already installed."
+else
+  git clone https://github.com/tmux-plugins/tpm /home/vscode/.tmux/plugins/tpm
+fi
 
 ###############################################################################
 # Link dotfiles
