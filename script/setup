@@ -24,6 +24,13 @@ sudo apk add xclip
 ###############################################################################
 cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
 
+
+###############################################################################
+# Prefer Bash
+###############################################################################
+chsh -s /bin/bash
+
+
 # sudo apk add vim
 # sudo apk add ranger
 
