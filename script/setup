@@ -1,0 +1,16 @@
+#!/usr/bin/env zsh
+
+sudo apk update
+sudo apk add tmux
+
+cp -rsf ~/code/dotfiles/config_files/. ~
+
+# sudo apk add vim
+# sudo apk add ranger
+
+# sudo apk del ranger
+# sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+
+# gh cs list
+# gh cs delete
+
