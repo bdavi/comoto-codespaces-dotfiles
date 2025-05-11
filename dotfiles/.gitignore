@@ -1,0 +1,9 @@
+.*.sw*
+**/*.swp
+.*.swo
+*.sw?
+*.sv?
+*.pyc
+tags
+.DS_Store
+/node_modules
