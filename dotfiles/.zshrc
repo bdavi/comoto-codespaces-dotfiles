@@ -66,7 +66,7 @@ alias dc='docker compose'
 ################################################################################
 export COMOTO_PROJECT_ROOT=/workspaces
 
-if [ -d "$COMOTO_PROJECT_ROOT/monorepo" ]
+if [ -d "$COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh" ]
 then
   source $COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh
   alias ecom-log='docker logs -f --tail 1000 zla-ecom-webapp-1'
@@ -86,9 +86,14 @@ then
   alias fixit='cd $COMOTO_PROJECT_ROOT/monorepo && docker compose down && docker volume remove zla_cg-deps zla_jp-deps zla_rz-deps zla_cg-build zla_jp-build zla_rz-build && docker compose pull && docker compose up -d'
 fi
 
-if [ -d "$COMOTO_PROJECT_ROOT/ecom_api" ]
+if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
 then
-  source $HOME/ecom_api/scripts/bash_functions.sh
+  source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
+fi
+
+if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
+then
+  source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
 fi
 
 ################################################################################

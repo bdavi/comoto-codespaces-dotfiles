@@ -2,6 +2,7 @@
 
 sudo apk update
 
+
 ###############################################################################
 # Install tmux
 ###############################################################################
@@ -19,22 +20,17 @@ sudo apk add xclip
 
 
 ###############################################################################
+# Vim
+###############################################################################
+sudo apk add vim
+sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
+
+
+###############################################################################
 # Link dotfiles
 ###############################################################################
 cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
 
-
-###############################################################################
-# Prefer Bash
-###############################################################################
-chsh -s /bin/bash
-
-
-# sudo apk add vim
-# sudo apk add ranger
-
-# sudo apk del ranger
-# sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community
 
 ##################################
 # Codespaces Notes
@@ -43,3 +39,6 @@ chsh -s /bin/bash
 # gh cs delete
 # gh cs create -R Comoto-Tech/dev-hub
 # gh cs ssh
+#
+# tail -f /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
+# cat /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
