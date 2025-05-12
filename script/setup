@@ -70,3 +70,7 @@ cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode
 # To get clipboard support in terminals wihtout OSC52 support,
 # run with extra SSH arguments:
 # gh cs ssh -- -XY
+#
+# /workspaces/.codespaces/.persistedshare/dotfiles/script/setup
+# source ~/.zprofile
+#
