@@ -150,14 +150,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-repeat'
   Plug 'scrooloose/syntastic'
-  Plug 'gcorne/vim-sass-lint'
   Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
-
-" sass-lint
-let g:syntastic_sass_checkers=["sasslint"]
-let g:syntastic_scss_checkers=["sasslint"]
-
 
 " coc.nvim
 " Use tab for trigger completion with characters ahead and navigate
@@ -265,10 +259,10 @@ function FormatAndRedraw()
   let rlfilematch = matchstr(currentpath, 'redline')
 
   if len(rlfilematch)
-    let redlinepath = $HOME . "/monorepo/redline/"
+      let redlinepath = "${COMOTO_PROJECT_ROOT}/monorepo/redline/"
     let formatpath = substitute(currentpath, "^" . redlinepath, "", "")
 
-    silent exec "!${PROJECT_ROOT}/monorepo/zlaverse/support/frmt_vim.sh " . formatpath
+    silent exec "!${COMOTO_PROJECT_ROOT}/monorepo/zlaverse/support/frmt_vim.sh " . formatpath
     redraw!
   endif
 endfunction
