@@ -104,3 +104,9 @@ export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 function gca () {
     gcloud auth print-access-token | xclip -sel clip; echo "copied to clipboard"
 }
+
+
+################################################################################
+# Prompt
+################################################################################
+source ~/.zsh/git-prompt.zsh/git-prompt.zsh
