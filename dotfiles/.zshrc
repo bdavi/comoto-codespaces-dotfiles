@@ -48,65 +48,91 @@ alias ga='git add'
 # Delete branches already merged into current branch
 alias gdb='git branch --merged | grep -E -v "(^\*|master|main|dev)" | xargs git branch -d'
 
-# Switch to -D for danger mode
-function full-prune() {
-  git fetch -p
-  git branch -r | awk '{print $1}' | grep -E -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
-}
+# # Switch to -D for danger mode
+# function full-prune() {
+#   git fetch -p
+#   git branch -r | awk '{print $1}' | grep -E -v -f /dev/fd/0 <(git branch -vv | grep origin) | awk '{print $1}' | xargs git branch -d
+# }
 
 
 ###############################################################################
 # Docker
 ###############################################################################
-alias dc='docker compose'
+# alias dc='docker compose'
 
 
 ################################################################################
 # Apps
 ################################################################################
-export COMOTO_PROJECT_ROOT=/workspaces
+# export COMOTO_PROJECT_ROOT=/workspaces
 
-if [ -f "$COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh" ]
-then
-  source $COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh
-  alias ecom-log='docker logs -f --tail 1000 zla-ecom-webapp-1'
-  alias ecom-logs='docker logs -f --tail 1000 zla-ecom-webapp-1'
-  alias cg-log='container-log cycle-gear-redline-webapp'
-  alias cg-logs='container-log cycle-gear-redline-webapp'
-  alias rz-log='container-log revzilla-redline-webapp'
-  alias rz-logs='container-log revzilla-redline-webapp'
-  alias jp-log='container-log jp-cycles-redline-webapp'
-  alias jp-logs='container-log jp-cycles-redline-webapp'
-  alias p-log='container-log product-service'
-  alias p-logs='container-log product-service'
-  alias ps-log='container-log product-search-service'
-  alias ps-logs='container-log product-search-service'
-  alias elts='ecom-load-test-schema'
-  alias cglts='cg-load-test-schema'
-  alias fixit='cd $COMOTO_PROJECT_ROOT/monorepo && docker compose down && docker volume remove zla_cg-deps zla_jp-deps zla_rz-deps zla_cg-build zla_jp-build zla_rz-build && docker compose pull && docker compose up -d'
-fi
+# if [ -f "$COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh" ]
+# then
+#   source $COMOTO_PROJECT_ROOT/monorepo/zlaverse/support/bash_functions.sh
+#   alias ecom-log='docker logs -f --tail 1000 zla-ecom-webapp-1'
+#   alias ecom-logs='docker logs -f --tail 1000 zla-ecom-webapp-1'
+#   alias cg-log='container-log cycle-gear-redline-webapp'
+#   alias cg-logs='container-log cycle-gear-redline-webapp'
+#   alias rz-log='container-log revzilla-redline-webapp'
+#   alias rz-logs='container-log revzilla-redline-webapp'
+#   alias jp-log='container-log jp-cycles-redline-webapp'
+#   alias jp-logs='container-log jp-cycles-redline-webapp'
+#   alias p-log='container-log product-service'
+#   alias p-logs='container-log product-service'
+#   alias ps-log='container-log product-search-service'
+#   alias ps-logs='container-log product-search-service'
+#   alias elts='ecom-load-test-schema'
+#   alias cglts='cg-load-test-schema'
+#   alias fixit='cd $COMOTO_PROJECT_ROOT/monorepo && docker compose down && docker volume remove zla_cg-deps zla_jp-deps zla_rz-deps zla_cg-build zla_jp-build zla_rz-build && docker compose pull && docker compose up -d'
+# fi
 
-if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
-then
-  source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
-fi
+# if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
+# then
+#   source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
+# fi
 
-if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
-then
-  source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
-fi
+# if [ -f "$COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh" ]
+# then
+#   source $COMOTO_PROJECT_ROOT/ecom_api/scripts/bash_functions.sh
+# fi
 
 ################################################################################
 # Google Cloud
 ################################################################################
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+# export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
-function gca () {
-    gcloud auth print-access-token | xclip -sel clip; echo "copied to clipboard"
-}
+# function gca () {
+#     gcloud auth print-access-token | xclip -sel clip; echo "copied to clipboard"
+# }
 
 
 ################################################################################
 # Prompt
 ################################################################################
-source ~/.zsh/git-prompt.zsh/git-prompt.zsh
+# source ~/.zsh/git-prompt.zsh/git-prompt.zsh
+
+
+################################################################################
+# Default
+################################################################################
+
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time Oh My Zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="devcontainers"
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+DISABLE_AUTO_UPDATE=true
+DISABLE_UPDATE_PROMPT=true

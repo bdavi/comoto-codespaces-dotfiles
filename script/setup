@@ -14,21 +14,21 @@ else
   git clone https://github.com/tmux-plugins/tpm /home/vscode/.tmux/plugins/tpm
 fi
 
-sudo apk add xsel
-sudo apk add xclip
+# sudo apk add xsel
+# sudo apk add xclip
 
 
 ###############################################################################
 # zsh
 ###############################################################################
-mkdir -p ~/.zsh
+# mkdir -p ~/.zsh
 
-if [ -d "/home/vscode/.zsh/git-prompt.zsh" ]
-then
-  echo "zsh git-prompt plugin ager already installed"
-else
-  git clone --depth=1 https://github.com/woefe/git-prompt.zsh ~/.zsh/git-prompt.zsh
-fi
+# if [ -d "/home/vscode/.zsh/git-prompt.zsh" ]
+# then
+#   echo "zsh git-prompt plugin ager already installed"
+# else
+#   git clone --depth=1 https://github.com/woefe/git-prompt.zsh ~/.zsh/git-prompt.zsh
+# fi
 
 
 ###############################################################################
