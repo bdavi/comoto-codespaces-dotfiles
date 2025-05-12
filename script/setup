@@ -59,3 +59,7 @@ cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode
 #
 # tail -f /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
 # cat /workspaces/.codespaces/.persistedshare/EnvironmentLog.txt
+#
+# To get clipboard support in terminals wihtout OSC52 support,
+# run with extra SSH arguments:
+# gh cs ssh -- -XY
