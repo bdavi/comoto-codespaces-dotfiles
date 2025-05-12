@@ -22,7 +22,13 @@ sudo apk add xclip
 # zsh
 ###############################################################################
 mkdir -p ~/.zsh
-git clone --depth=1 https://github.com/woefe/git-prompt.zsh ~/.zsh/git-prompt.zsh
+
+if [ -d "/home/vscode/.zsh/git-prompt.zsh" ]
+then
+  echo "zsh git-prompt plugin ager already installed"
+else
+  git clone --depth=1 https://github.com/woefe/git-prompt.zsh ~/.zsh/git-prompt.zsh
+fi
 
 
 ###############################################################################
