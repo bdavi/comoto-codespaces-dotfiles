@@ -26,7 +26,7 @@ git clone --depth=1 https://github.com/woefe/git-prompt.zsh ~/.zsh/git-prompt.zs
 
 
 ###############################################################################
-# Vim
+# vim/nvim
 ###############################################################################
 sudo apk add vim
 
@@ -34,6 +34,7 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 vim +'PlugInstall --sync' +qa
+nvim +'PlugInstall --sync' +qa
 
 
 ###############################################################################
