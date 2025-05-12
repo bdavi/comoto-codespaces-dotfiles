@@ -99,11 +99,11 @@ fi
 ################################################################################
 # Google Cloud
 ################################################################################
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+# export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 
-function gca () {
-    gcloud auth print-access-token | xclip -sel clip; echo "copied to clipboard"
-}
+# function gca () {
+#     gcloud auth print-access-token | xclip -sel clip; echo "copied to clipboard"
+# }
 
 
 ################################################################################
