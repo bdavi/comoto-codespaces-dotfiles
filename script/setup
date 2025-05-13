@@ -14,7 +14,6 @@ else
   git clone https://github.com/tmux-plugins/tpm /home/vscode/.tmux/plugins/tpm
 fi
 
-sudo apk add xsel
 sudo apk add xclip
 
 
@@ -55,7 +54,3 @@ sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/comm
 cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
 
 
-###############################################################################
-# Apps
-###############################################################################
-/workspaces/monorepo/decrypt_everything.sh
