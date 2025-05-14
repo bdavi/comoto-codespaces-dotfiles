@@ -17,9 +17,9 @@ alias source!='source ~/.zshrc; tmux source-file ~/.tmux.conf; tmux display-mess
 ###############################################################################
 # Editor
 ###############################################################################
-export EDITOR='vim'
-alias cim='vim'
-alias bim='vim'
+export EDITOR='nvim'
+alias cim='nvim'
+alias bim='nvim'
 
 
 ###############################################################################
