@@ -12,6 +12,8 @@ gh cs ssh -- -XY
 # Port forward for DataGrip
 gh cs ports forward 5432:5432
 
+# Loyalty postman
+gh cs ports forward 4001:4001
 
 ##################################
 # From inside codespace
