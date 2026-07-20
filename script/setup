@@ -21,10 +21,10 @@ sudo apk add xclip
 # Install Claude
 ###############################################################################
 if ! which claude &> /dev/null; then
-    curl -fsSL https://claude.ai/install.sh | bash
-    echo "installed claude code (native linux)"
+  curl -fsSL https://claude.ai/install.sh | bash
+  echo "installed claude code (native linux)"
 else
-    echo "claude is already installed."
+  echo "claude is already installed."
 fi
 
 ###############################################################################
