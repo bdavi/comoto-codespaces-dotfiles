@@ -41,13 +41,28 @@ fi
 
 
 ###############################################################################
-# nvim
+# vim (plain, non-neovim - vim-plug/coc.nvim, see dotfiles/.vimrc)
 ###############################################################################
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 # vim +'PlugInstall --sync' +qa
-# nvim +'PlugInstall --sync' +qa
+
+
+###############################################################################
+# Neovim (dotfiles/.config/nvim/init.lua - ported from bdavi/dotfiles, a
+# separate config from plain vim's above). Alpine's stable repos ship a
+# neovim too old for this plugin set (blink.cmp, treesitter's master
+# branch), so this pulls from edge instead, same as ranger below. build-base
+# is a C compiler for Treesitter parsers; ripgrep/fzf back fzf-lua;
+# font-jetbrains-mono-nerd supplies the Nerd Font glyphs lualine, blink.cmp,
+# and fzf-lua/oil.nvim's file icons need (only installs the font - selecting
+# it as your terminal's font is still a manual step).
+###############################################################################
+sudo apk add \
+  --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
+  --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community \
+  neovim ripgrep fzf tree-sitter-cli build-base font-jetbrains-mono-nerd
 
 
 ###############################################################################
@@ -59,6 +74,62 @@ sudo apk add ranger --repository=https://dl-cdn.alpinelinux.org/alpine/edge/comm
 ###############################################################################
 # Link dotfiles
 ###############################################################################
+# A leftover ~/.config/nvim/init.vim from before the migration to init.lua
+# (it used to just source ~/.vimrc) makes Neovim load both and error with
+# "E5422: Conflicting configs" on every startup. Removed before linking so
+# init.lua is the only one in place; -f is a no-op if it's already gone.
+rm -f ~/.config/nvim/init.vim
+
 cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode/
+
+
+###############################################################################
+# Neovim plugins
+###############################################################################
+# init.lua bootstraps lazy.nvim itself on first launch, so there's no
+# separate plugin-manager install step here - just driving Neovim headlessly
+# to force everything lazy.nvim manages (plugins, Treesitter parsers) to
+# actually finish installing now, rather than leaving it to race in the
+# background the first time someone opens nvim. No LSP servers - not set up
+# for this codespace.
+nvim --headless "+Lazy! sync" +qa
+
+# Blocks until every configured parser finishes compiling - unlike
+# ensure_installed's async auto_install, which +qa can cut off mid-job.
+nvim --headless "+TSUpdateSync" +qa
+
+
+###############################################################################
+# Herdr
+###############################################################################
+# Official installer (https://herdr.dev/docs/install/): a POSIX sh script
+# that resolves the latest release and drops a single binary in
+# ~/.local/bin, no sudo/apk package needed. config.toml itself
+# (dotfiles/.config/herdr/config.toml, linked above) isn't managed here -
+# herdr only *reads* it; onboarding = false permanently skips the one thing
+# that writes to it (first-run onboarding), so it's safe to track and
+# symlink normally, same as .vimrc.
+if ! command -v herdr >/dev/null; then
+  curl -fsSL https://herdr.dev/install.sh | sh
+fi
+
+# `herdr update` replaces the running binary out from under the herdr
+# process managing the current session, which fails when this script is run
+# from inside a herdr pane. $HERDR_ENV is set for any shell running inside
+# herdr, same signal .vimrc keys off via $HERDR_PANE_ID.
+if [[ -n "${HERDR_ENV:-}" ]]; then
+  echo "Running inside herdr - skipping herdr update"
+else
+  herdr update
+fi
+
+# vim-herdr-navigation (Ctrl+h/j/k/l across herdr panes and Vim/Neovim
+# splits), spaces-pr-status (GitHub PR status in the sidebar - needs `gh`
+# authenticated), gitview (git status/diff panel, cmd+g toggle) - all
+# idempotent to re-run. Their keybindings/sidebar rows live in
+# dotfiles/.config/herdr/config.toml, linked above, not here.
+herdr plugin install paulbkim-dev/vim-herdr-navigation -y
+herdr plugin install jmarbutt/herdr-spaces-pr-status -y
+herdr plugin install ChmaraX/herdr-gitview -y
 
 
