@@ -21,6 +21,7 @@ vim.opt.swapfile = false
 -- always hits it -- no separate register to think about, and it's what
 -- lets you move text between vim buffers and other tmux/herdr panes.
 vim.opt.clipboard = "unnamed,unnamedplus"
+vim.g.clipboard = "osc52"
 
 vim.opt.scrolloff = 3
 
