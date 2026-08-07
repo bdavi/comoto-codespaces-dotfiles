@@ -5,6 +5,34 @@ vim.g.mapleader = " "
 --------------------------------------------------------------------------
 vim.opt.updatetime = 250
 
+-- Reload a buffer from disk when another process changes the underlying
+-- file, as long as this buffer has no unsaved local edits - `checktime`'s
+-- own behavior, not reimplemented here, so a modified buffer still gets
+-- the usual "changed since editing started" prompt instead of being
+-- silently overwritten. `autoread` alone is a no-op in terminal Vim/Neovim
+-- without something to actually trigger `checktime` - it only checks on
+-- specific events, it doesn't poll. FocusGained catches switching back to
+-- the terminal from outside (if the terminal forwards focus events - not
+-- guaranteed through tmux/herdr panes), BufEnter catches switching
+-- buffers/windows inside Neovim itself, and CursorHold/CursorHoldI (after
+-- `updatetime` ms idle, set above) catches sitting on an unchanged buffer
+-- while another process edits the file underneath it.
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+  desc = "Reload buffers changed on disk by another process",
+  callback = function()
+    if vim.fn.mode() ~= "c" then
+      vim.cmd("checktime")
+    end
+  end,
+})
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  desc = "Notify after a buffer is auto-reloaded from disk",
+  callback = function()
+    vim.notify("File changed on disk, buffer reloaded", vim.log.levels.WARN)
+  end,
+})
+
 vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
 vim.opt.softtabstop = 2
@@ -21,6 +49,24 @@ vim.opt.swapfile = false
 -- always hits it -- no separate register to think about, and it's what
 -- lets you move text between vim buffers and other tmux/herdr panes.
 vim.opt.clipboard = "unnamed,unnamedplus"
+
+-- Copy via OSC 52 (forced, since autodetection is unreliable through
+-- ssh + herdr), but paste from the local unnamed register: herdr forwards
+-- OSC 52 writes but doesn't answer reads, so the stock osc52 paste would
+-- stall ~10s on every p/P waiting for a response that never comes.
+-- External content comes in via the terminal's own paste (bracketed
+-- paste) instead.
+vim.g.clipboard = {
+  name = "OSC 52",
+  copy = {
+    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+  },
+  paste = {
+    ["+"] = function() return vim.split(vim.fn.getreg('"'), "\n") end,
+    ["*"] = function() return vim.split(vim.fn.getreg('"'), "\n") end,
+  },
+}
 
 vim.opt.scrolloff = 3
 
@@ -148,6 +194,25 @@ require("lazy").setup({
     opts = {},
   },
   {
+    -- Single animated line marking the indent scope under the cursor
+    -- (dedent-aware, so it works in Python/YAML/ERB too, not just
+    -- brace languages) -- lighter than indent-blankline, which draws a
+    -- line per indent level instead of just the current scope. Also
+    -- throws in ii/ai text objects and [i/]i motions for free.
+    "echasnovski/mini.indentscope",
+    event = { "BufReadPost", "BufNewFile" },
+    -- opts as a function, not a table: a table is evaluated immediately
+    -- while lazy.nvim builds the spec (before the plugin's installed on a
+    -- fresh setup, and eagerly on every run after, defeating `event`
+    -- above) -- a function is only called once the plugin actually loads.
+    opts = function()
+      return {
+        symbol = "│",
+        draw = { animation = require("mini.indentscope").gen_animation.none() },
+      }
+    end,
+  },
+  {
     "saghen/blink.cmp",
     -- v2 is under active development with breaking changes; pin to the
     -- stable v1 line (ships prebuilt fuzzy-matcher binaries).
@@ -180,12 +245,41 @@ require("lazy").setup({
     opts = {},
   },
   {
+    -- Symbol outline sidebar (backed by LSP when attached, treesitter
+    -- otherwise) -- orienting fast in a large/unfamiliar file without
+    -- hunting line by line, e.g. after an AI-generated edit. No LSP is
+    -- attached here (see the local-only mason-lspconfig block in
+    -- bdavi/dotfiles), so this always runs off treesitter.
+    "stevearc/aerial.nvim",
+    keys = {
+      { "<leader>a", "<cmd>AerialToggle<cr>", desc = "Toggle symbol outline" },
+    },
+    opts = {},
+  },
+  {
     "stevearc/oil.nvim",
     keys = {
       -- oil takes over the current window/buffer rather than opening a
       -- split or float, so open a fresh tab first to keep it out of the
-      -- way of whatever's already open.
-      { "<leader>n", "<cmd>tabnew | Oil<cr>", desc = "Open oil (new tab)" },
+      -- way of whatever's already open. Seed it with the directory of the
+      -- buffer that was current beforehand -- tabnew's new buffer is
+      -- unnamed, so a bare `:Oil` there would fall back to nvim's launch
+      -- cwd instead. If oil's already the current buffer (i.e. its own
+      -- tab), close that tab instead of stacking another one -- symmetric
+      -- with the tabnew that opened it.
+      {
+        "<leader>n",
+        function()
+          if vim.bo.filetype == "oil" then
+            vim.cmd("tabclose")
+            return
+          end
+          local dir = vim.fn.expand("%:p:h")
+          vim.cmd("tabnew")
+          vim.cmd("Oil " .. vim.fn.fnameescape(dir))
+        end,
+        desc = "Open oil (new tab)",
+      },
     },
     opts = {
       view_options = {
