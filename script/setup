@@ -113,6 +113,20 @@ if ! command -v herdr >/dev/null; then
   curl -fsSL https://herdr.dev/install.sh | sh
 fi
 
+# The local machine's herdr-mirror plugin (nikok6/herdr-mirror) mirrors this
+# codespace's workspaces into the local sidebar, and requires both ends on
+# herdr's preview channel - specifically a preview build dated 2026-06-30 or
+# newer, per the plugin's own README. See
+# bdavi/dotfiles misc/herdr_codespaces.md for the full verification. The
+# remote (this codespace) needs no plugin of its own, just herdr itself on
+# the right channel - `channel set` alone doesn't fetch anything, hence the
+# `herdr update` below still has to run to actually pick up a preview build.
+CURRENT_HERDR_CHANNEL="$(herdr channel show)"
+if [[ "$CURRENT_HERDR_CHANNEL" != "preview" ]]; then
+  echo "Switching herdr from $CURRENT_HERDR_CHANNEL to preview channel"
+  herdr channel set preview
+fi
+
 # `herdr update` replaces the running binary out from under the herdr
 # process managing the current session, which fails when this script is run
 # from inside a herdr pane. $HERDR_ENV is set for any shell running inside
@@ -121,15 +135,22 @@ if [[ -n "${HERDR_ENV:-}" ]]; then
   echo "Running inside herdr - skipping herdr update"
 else
   herdr update
+  echo "herdr version: $(herdr --version)"
 fi
 
 # vim-herdr-navigation (Ctrl+h/j/k/l across herdr panes and Vim/Neovim
 # splits), spaces-pr-status (GitHub PR status in the sidebar - needs `gh`
-# authenticated), gitview (git status/diff panel, cmd+g toggle) - all
-# idempotent to re-run. Their keybindings/sidebar rows live in
-# dotfiles/.config/herdr/config.toml, linked above, not here.
+# authenticated), gitview (git status/diff panel, cmd+g toggle), reviewr
+# (review panel for an agent's diff, prefix+r toggle - needs `gh`
+# authenticated for its PR tab) - all idempotent to re-run. Their
+# keybindings/sidebar rows live in dotfiles/.config/herdr/config.toml,
+# linked above; reviewr's own settings (toggle_placement) live in
+# dotfiles/.config/herdr/plugins/config/persiyanov.reviewr/config.toml,
+# also linked above - neither is set up here. `gh` is pre-authenticated on
+# every Codespace automatically, so reviewr's PR tab needs no extra setup.
 herdr plugin install paulbkim-dev/vim-herdr-navigation -y
 herdr plugin install jmarbutt/herdr-spaces-pr-status -y
 herdr plugin install ChmaraX/herdr-gitview -y
+herdr plugin install persiyanov/herdr-reviewr -y
 
 
