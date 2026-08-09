@@ -245,11 +245,10 @@ require("lazy").setup({
     opts = {},
   },
   {
-    -- Symbol outline sidebar (backed by LSP when attached, treesitter
-    -- otherwise) -- orienting fast in a large/unfamiliar file without
-    -- hunting line by line, e.g. after an AI-generated edit. No LSP is
-    -- attached here (see the local-only mason-lspconfig block in
-    -- bdavi/dotfiles), so this always runs off treesitter.
+    -- Symbol outline sidebar, runs off treesitter (no LSP in this setup,
+    -- on either side of the local/codespaces split) -- orienting fast in
+    -- a large/unfamiliar file without hunting line by line, e.g. after
+    -- an AI-generated edit.
     "stevearc/aerial.nvim",
     keys = {
       { "<leader>a", "<cmd>AerialToggle<cr>", desc = "Toggle symbol outline" },
