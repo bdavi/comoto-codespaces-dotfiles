@@ -1,5 +1,21 @@
 #!/usr/bin/env zsh
 
+###############################################################################
+# Run-once sentinel
+###############################################################################
+# GitHub runs this exactly once at codespace creation, where the sentinel
+# can't exist yet - the guard is for manual/scripted re-runs (SSH sessions,
+# herdr-add-cs), which can also use the sentinel to *check* that the
+# creation-time run actually finished (a dotfiles failure doesn't fail
+# codespace creation, it's only visible in
+# /workspaces/.codespaces/.persistedshare/creation.log). Touched at the
+# end, so a partial run doesn't count as done.
+SENTINEL="$HOME/.dotfiles-setup-done"
+if [[ -f "$SENTINEL" && "$1" != "--force" ]]; then
+  echo "dotfiles setup already completed ($SENTINEL exists) - re-run with --force"
+  exit 0
+fi
+
 sudo apk update
 
 ###############################################################################
@@ -152,5 +168,11 @@ herdr plugin install paulbkim-dev/vim-herdr-navigation -y
 herdr plugin install jmarbutt/herdr-spaces-pr-status -y
 herdr plugin install ChmaraX/herdr-gitview -y
 herdr plugin install persiyanov/herdr-reviewr -y
+
+
+###############################################################################
+# Done - mark for the run-once guard at the top
+###############################################################################
+touch "$SENTINEL"
 
 
