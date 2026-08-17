@@ -68,12 +68,12 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 ###############################################################################
 # Neovim (dotfiles/.config/nvim/init.lua - ported from bdavi/dotfiles, a
 # separate config from plain vim's above). Alpine's stable repos ship a
-# neovim too old for this plugin set (blink.cmp, treesitter's master
-# branch), so this pulls from edge instead, same as ranger below. build-base
-# is a C compiler for Treesitter parsers; ripgrep/fzf back fzf-lua;
-# font-jetbrains-mono-nerd supplies the Nerd Font glyphs lualine, blink.cmp,
-# and fzf-lua/oil.nvim's file icons need (only installs the font - selecting
-# it as your terminal's font is still a manual step).
+# neovim too old for this plugin set (blink.cmp, treesitter's main branch,
+# which requires 0.12+), so this pulls from edge instead, same as ranger
+# below. build-base is a C compiler for Treesitter parsers; ripgrep/fzf
+# back fzf-lua; font-jetbrains-mono-nerd supplies the Nerd Font glyphs
+# lualine, blink.cmp, and fzf-lua/oil.nvim's file icons need (only installs
+# the font - selecting it as your terminal's font is still a manual step).
 ###############################################################################
 sudo apk add \
   --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
@@ -110,9 +110,19 @@ cp -rsf /workspaces/.codespaces/.persistedshare/dotfiles/dotfiles/. /home/vscode
 # for this codespace.
 nvim --headless "+Lazy! sync" +qa
 
-# Blocks until every configured parser finishes compiling - unlike
-# ensure_installed's async auto_install, which +qa can cut off mid-job.
-nvim --headless "+TSUpdateSync" +qa
+# nvim-treesitter's `main` branch installs its own parsers via an async
+# `install()` job as part of loading during the "Lazy! sync" run above, but
+# that job can still be mid-compile when +qa exits. `main` also dropped
+# `:TSUpdateSync` (the old `master`-branch blocking command), so instead
+# this re-issues the same install call and blocks on it directly - a no-op
+# wait for anything already compiled, a real wait for anything still in
+# flight. Keep this list in sync with the `parsers` list in init.lua.
+nvim --headless -c "lua require('nvim-treesitter').install({
+  'bash', 'css', 'elixir', 'embedded_template', 'erlang', 'go',
+  'html', 'javascript', 'json', 'lua', 'markdown', 'markdown_inline',
+  'perl', 'python', 'query', 'ruby', 'tsx', 'typescript', 'vim',
+  'vimdoc', 'yaml',
+}):wait(300000)" +qa
 
 
 ###############################################################################

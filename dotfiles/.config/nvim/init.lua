@@ -131,9 +131,16 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   {
     "nvim-treesitter/nvim-treesitter",
-    -- nvim-treesitter's `main` branch requires Neovim 0.12+; `master` is the
-    -- frozen-but-supported branch for 0.10/0.11 and is what this box runs.
-    branch = "master",
+    -- `main` is a full, incompatible rewrite of the plugin (no more
+    -- `configs.setup`; highlight/indent are enabled per-filetype below
+    -- instead of via a config table) and requires Neovim 0.12+, which is
+    -- what Alpine edge (script/setup) ships. `master`, the old API this
+    -- used to run on, is frozen for 0.10/0.11 and stopped tracking
+    -- Neovim's core treesitter changes - that's what broke highlighting
+    -- once edge moved past 0.11 (`attempt to call method 'range' (a nil
+    -- value)` in languagetree.lua, hit and root-caused on bdavi/dotfiles,
+    -- this config's source).
+    branch = "main",
     lazy = false,
     build = ":TSUpdate",
     dependencies = {
@@ -143,16 +150,35 @@ require("lazy").setup({
       "RRethy/nvim-treesitter-endwise",
     },
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "bash", "css", "elixir", "embedded_template", "erlang", "go",
-          "html", "javascript", "json", "lua", "markdown", "markdown_inline",
-          "perl", "python", "query", "ruby", "tsx", "typescript", "vim",
-          "vimdoc", "yaml",
-        },
-        auto_install = true,
-        highlight = { enable = true },
-        indent = { enable = true },
+      -- Parser names, per `:h nvim-treesitter-supported-languages` - what
+      -- `install()` and `:TSUpdate` take.
+      local parsers = {
+        "bash", "css", "elixir", "embedded_template", "erlang", "go",
+        "html", "javascript", "json", "lua", "markdown", "markdown_inline",
+        "perl", "python", "query", "ruby", "tsx", "typescript", "vim",
+        "vimdoc", "yaml",
+      }
+      require("nvim-treesitter").install(parsers)
+
+      -- Buffer filetypes to attach treesitter to - not the same list as
+      -- `parsers` above: markdown_inline has no buffer of its own (only
+      -- reached via injection from markdown), and embedded_template/tsx/
+      -- vimdoc are parser names whose filetypes are actually eruby/
+      -- typescriptreact/help.
+      local filetypes = {
+        "bash", "css", "elixir", "eruby", "erlang", "go",
+        "html", "javascript", "json", "lua", "markdown",
+        "perl", "python", "query", "ruby", "typescriptreact", "typescript",
+        "vim", "help", "yaml",
+      }
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = filetypes,
+        callback = function()
+          vim.treesitter.start()
+          -- Indentation support is still marked experimental upstream but
+          -- was already relied on here under `master`'s indent.enable.
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end,
       })
     end,
   },
